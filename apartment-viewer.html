@@ -1,0 +1,2430 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>实测优先配平模型</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f5f3;color:#253b43;font:15px/1.6 system-ui,sans-serif}header{padding:18px 24px;background:white;border-bottom:1px solid #d9dedb}h1{font-size:23px;margin:0 0 6px}p{margin:6px 0}.notice{color:#855e2f;font-size:14px}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:13px}button,select{font:inherit;min-height:42px;padding:7px 12px;background:white;color:inherit;border:1px solid #bfcacb;border-radius:5px}button[aria-pressed="true"]{background:#263f48;color:white}.view{height:min(78vh,850px);min-height:440px;background:#fff;margin:16px 24px;position:relative}canvas{display:block;width:100%;height:100%;touch-action:none}#plan{width:100%;height:100%;overflow:auto}#plan>svg{display:block;width:100%;height:auto;min-width:850px}.detail{margin:0 24px 18px;padding:10px 0;border-bottom:1px solid #d9dedb}.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px}.tv{color:#cc6026}.bay{color:#A02B93}.door{color:#0F9ED5}details{margin:16px 24px}table{border-collapse:collapse;width:100%;max-width:800px;font-size:14px}td,th{text-align:left;border-bottom:1px solid #dce2df;padding:7px 10px}th{background:#edf0ed}.table-wrap{overflow:auto}footer{padding:12px 24px;font-size:13px;color:#66747a}@media(max-width:600px){header{padding:12px}.view{margin:12px 0;height:64vh}.detail{margin:0 12px}h1{font-size:20px}.controls{gap:7px}select{max-width:100%}}
+</style></head>
+<body><header><h1>实测优先配平模型</h1><p>40 段完成面净尺寸：37 段保持原值，厨房 3 段各微调约 0.667 mm。</p><p class="notice">配平假设：卧3左隔墙厚12 cm；阳台右侧内墙比W28门洞右边偏右62.5 cm。高度未实测，本模型不是竣工图。</p>
+<div class="controls"><button id="b3" aria-pressed="true">三维</button><button id="b2" aria-pressed="false">平面</button><button id="reset">复位视角</button><label>显示高度 <select id="cap"><option value="1100">低墙展示 1.1m</option><option value="2800">完整占位 2.8m</option></select></label><label>核对墙段 <select id="wall-select"><option value="">选择 W01–W40</option></select></label></div>
+</header><main><div class="view"><canvas id="model" aria-label="配平三维模型，可拖动旋转。尺寸表在下方。"></canvas><div id="plan" hidden><svg xmlns="http://www.w3.org/2000/svg" width="460mm" height="420mm" viewBox="-1100 -1750 13800 12600">
+<rect x="-1100" y="-1750" width="13800" height="12600" fill="white"/>
+<g font-family="Arial,Microsoft YaHei,PingFang SC,DejaVu Sans,sans-serif">
+<text x="-900" y="-1350" font-size="270" fill="#243B45">实测优先配平平面图</text>
+<text x="-900" y="-1070" font-size="160" fill="#243B45">标注单位 cm；几何坐标 mm。37段不变，厨房3段最大调整0.7mm。</text>
+<text x="-900" y="-810" font-size="145" fill="#243B45">墙厚、局部位置与高度为推定，不是现场竣工图。* 表示微调值，详见说明。</text>
+</g><g id="walls">
+<rect id="west_upper" x="-200.00000" y="-200.00000" width="200.00000" height="4360.00000" fill="#171B1F"><title>west_upper / thickness inferred</title></rect>
+<rect id="tv_W38" x="-200.00000" y="4160.00000" width="200.00000" height="3110.00000" fill="#E97132"><title>tv_W38 / thickness inferred</title></rect>
+<rect id="west_lower" x="-200.00000" y="7270.00000" width="200.00000" height="310.00000" fill="#171B1F"><title>west_lower / thickness inferred</title></rect>
+<rect id="entry_W40" x="0.00000" y="-200.00000" width="703.00000" height="200.00000" fill="#171B1F"><title>entry_W40 / thickness inferred</title></rect>
+<rect id="entry_W02" x="1773.00000" y="-200.00000" width="1614.00000" height="200.00000" fill="#171B1F"><title>entry_W02 / thickness inferred</title></rect>
+<rect id="kitchen_left_upper" x="3267.00000" y="0.00000" width="120.00000" height="1070.00000" fill="#171B1F"><title>kitchen_left_upper / thickness inferred</title></rect>
+<rect id="kitchen_upper_W05" x="3387.00000" y="195.00000" width="1301.33333" height="200.00000" fill="#171B1F"><title>kitchen_upper_W05 / thickness inferred</title></rect>
+<rect id="kitchen_step_W06" x="4688.33333" y="195.00000" width="120.00000" height="620.00000" fill="#171B1F"><title>kitchen_step_W06 / thickness inferred</title></rect>
+<rect id="kitchen_step_W07" x="4688.33333" y="615.00000" width="539.33333" height="200.00000" fill="#171B1F"><title>kitchen_step_W07 / thickness inferred</title></rect>
+<rect id="kitchen_right" x="5227.66667" y="195.00000" width="120.00000" height="2760.00000" fill="#171B1F"><title>kitchen_right / thickness inferred</title></rect>
+<rect id="kitchen_left_lower" x="3267.00000" y="2675.00000" width="120.00000" height="400.00000" fill="#171B1F"><title>kitchen_left_lower / thickness inferred</title></rect>
+<rect id="kitchen_south_W12" x="3267.00000" y="2955.00000" width="2210.00000" height="120.00000" fill="#171B1F"><title>kitchen_south_W12 / thickness inferred</title></rect>
+<rect id="north_guest_bath" x="5347.66667" y="195.00000" width="1521.62602" height="200.00000" fill="#171B1F"><title>north_guest_bath / thickness inferred</title></rect>
+<rect id="north_bed2" x="6869.29268" y="195.00000" width="2990.00000" height="200.00000" fill="#171B1F"><title>north_bed2 / thickness inferred</title></rect>
+<rect id="north_right_bath" x="9859.29268" y="195.00000" width="1917.70732" height="200.00000" fill="#171B1F"><title>north_right_bath / thickness inferred</title></rect>
+<rect id="bed2_west" x="6869.29268" y="395.00000" width="120.00000" height="2560.00000" fill="#171B1F"><title>bed2_west / thickness inferred</title></rect>
+<rect id="bed2_east" x="9859.29268" y="395.00000" width="120.00000" height="2560.00000" fill="#171B1F"><title>bed2_east / thickness inferred</title></rect>
+<rect id="between_doors_W13" x="6274.29268" y="2955.00000" width="835.00000" height="155.00000" fill="#171B1F"><title>between_doors_W13 / thickness inferred</title></rect>
+<rect id="bed2_south_W17" x="7939.29268" y="2955.00000" width="2040.00000" height="155.00000" fill="#171B1F"><title>bed2_south_W17 / thickness inferred</title></rect>
+<rect id="right_bath_south_W18" x="10847.00000" y="2955.00000" width="730.00000" height="155.00000" fill="#171B1F"><title>right_bath_south_W18 / thickness inferred</title></rect>
+<rect id="east_outer" x="11577.00000" y="395.00000" width="200.00000" height="7185.00000" fill="#171B1F"><title>east_outer / thickness inferred</title></rect>
+<rect id="bed3_west_W26_W33" x="5265.00000" y="4185.00000" width="120.00000" height="3275.00000" fill="#171B1F"><title>bed3_west_W26_W33 / thickness inferred</title></rect>
+<rect id="bed3_north_W25" x="5265.00000" y="4185.00000" width="1930.00000" height="115.00000" fill="#171B1F"><title>bed3_north_W25 / thickness inferred</title></rect>
+<rect id="master_west_W24" x="8170.00000" y="4057.00000" width="120.00000" height="3523.00000" fill="#171B1F"><title>master_west_W24 / thickness inferred</title></rect>
+<rect id="south_W36" x="0.00000" y="7460.00000" width="1200.00000" height="120.00000" fill="#171B1F"><title>south_W36 / thickness inferred</title></rect>
+<rect id="south_W34" x="4745.00000" y="7460.00000" width="520.00000" height="120.00000" fill="#171B1F"><title>south_W34 / thickness inferred</title></rect>
+<rect id="south_bed3_corner" x="5265.00000" y="7460.00000" width="120.00000" height="120.00000" fill="#171B1F"><title>south_bed3_corner / thickness inferred</title></rect>
+<rect id="south_W27" x="5385.00000" y="7460.00000" width="370.00000" height="120.00000" fill="#171B1F"><title>south_W27 / thickness inferred</title></rect>
+<rect id="south_W29" x="7505.00000" y="7460.00000" width="665.00000" height="120.00000" fill="#171B1F"><title>south_W29 / thickness inferred</title></rect>
+<rect id="south_W23" x="8290.00000" y="7460.00000" width="752.00000" height="120.00000" fill="#171B1F"><title>south_W23 / thickness inferred</title></rect>
+<rect id="south_W20" x="11127.00000" y="7460.00000" width="450.00000" height="120.00000" fill="#171B1F"><title>south_W20 / thickness inferred</title></rect>
+<rect id="balcony_W30" x="1080.00000" y="7580.00000" width="120.00000" height="2080.00000" fill="#171B1F"><title>balcony_W30 / thickness inferred</title></rect>
+<rect id="balcony_W31" x="1200.00000" y="9540.00000" width="6930.00000" height="120.00000" fill="#171B1F"><title>balcony_W31 / thickness inferred</title></rect>
+<rect id="balcony_W32" x="8130.00000" y="7580.00000" width="120.00000" height="2080.00000" fill="#171B1F"><title>balcony_W32 / thickness inferred</title></rect>
+<rect id="bay_left" x="8942.00000" y="7460.00000" width="100.00000" height="910.00000" fill="#A02B93"><title>bay_left / thickness inferred</title></rect>
+<rect id="bay_back_W22" x="9042.00000" y="8270.00000" width="2085.00000" height="100.00000" fill="#A02B93"><title>bay_back_W22 / thickness inferred</title></rect>
+<rect id="bay_right_W21" x="11127.00000" y="7460.00000" width="100.00000" height="910.00000" fill="#A02B93"><title>bay_right_W21 / thickness inferred</title></rect>
+</g><g id="openings" stroke="#0F9ED5" stroke-width="28" fill="none">
+<path id="opening_W01" d="M703.0,0 L1773.0,0"><title>W01: 107.00cm / measured_width_height_assumed</title></path>
+<path id="opening_W35" d="M1200,7460 L4745.0,7460"><title>W35: 354.50cm / measured_width_height_assumed</title></path>
+<path id="opening_W28" d="M5755.0,7460 L7505.0,7460"><title>W28: 175.00cm / measured_width_height_assumed</title></path>
+<path id="opening_D_guest" d="M5477.0,2955.0 L6274.29268292683,2955.0" stroke-dasharray="55 40"><title>D_guest: 79.73cm / inferred_width_height_assumed</title></path>
+<path id="opening_D_bed2" d="M7109.29268292683,2955.0 L7939.29268292683,2955.0" stroke-dasharray="55 40"><title>D_bed2: 83.00cm / inferred_width_height_assumed</title></path>
+<path id="opening_D_right_bath" d="M9979.292682926829,2955.0 L10847.0,2955.0" stroke-dasharray="55 40"><title>D_right_bath: 86.77cm / inferred_width_height_assumed</title></path>
+<path id="opening_D_bed3" d="M7195.0,4300 L8170.0,4300" stroke-dasharray="55 40"><title>D_bed3: 97.50cm / inferred_width_height_assumed</title></path>
+<path id="opening_K_entry" d="M3387.0000000000005,1070 L3387.0000000000005,2675.0" stroke-dasharray="55 40"><title>K_entry: 160.50cm / inferred_width_height_assumed</title></path>
+</g><g id="measurements" font-family="Arial,DejaVu Sans,sans-serif" text-anchor="middle" fill="#9E302A" font-size="140">
+<g id="label_W01"><text x="1240" y="-480">W01</text><text x="1240" y="-310">107</text></g>
+<g id="label_W02"><text x="2500" y="-480">W02</text><text x="2500" y="-310">149.4</text></g>
+<g id="label_W03"><text x="2920" y="730">W03</text><text x="2920" y="900">107</text></g>
+<g id="label_W04"><text x="3740" y="1100">W04</text><text x="3740" y="1270">67.5</text></g>
+<g id="label_W05"><text x="4050" y="650">W05</text><text x="4050" y="820">130.13*</text></g>
+<g id="label_W06"><text x="4960" y="80">W06</text><text x="4960" y="250">42</text></g>
+<g id="label_W07"><text x="4960" y="1230">W07</text><text x="4960" y="1400">53.93*</text></g>
+<g id="label_W08"><text x="4870" y="2110">W08</text><text x="4870" y="2280">214</text></g>
+<g id="label_W09"><text x="4360" y="2700">W09</text><text x="4360" y="2870">184.07*</text></g>
+<g id="label_W10"><text x="3740" y="2400">W10</text><text x="3740" y="2570">28</text></g>
+<g id="label_W11"><text x="2930" y="2790">W11</text><text x="2930" y="2960">40</text></g>
+<g id="label_W12"><text x="4150" y="3370">W12</text><text x="4150" y="3540">221</text></g>
+<g id="label_W13"><text x="6690" y="3370">W13</text><text x="6690" y="3540">83.5</text></g>
+<g id="label_W14"><text x="7310" y="1960">W14</text><text x="7310" y="2130">256</text></g>
+<g id="label_W15"><text x="8420" y="730">W15</text><text x="8420" y="900">287</text></g>
+<g id="label_W16"><text x="9510" y="1960">W16</text><text x="9510" y="2130">256</text></g>
+<g id="label_W17"><text x="8900" y="2700">W17</text><text x="8900" y="2870">192</text></g>
+<g id="label_W18"><text x="11140" y="3370">W18</text><text x="11140" y="3540">73</text></g>
+<g id="label_W19"><text x="12300" y="5160">W19</text><text x="12300" y="5330">435</text></g>
+<g id="label_W20"><text x="11630" y="7860">W20</text><text x="11630" y="8030">45</text></g>
+<g id="label_W21"><text x="11610" y="8590">W21</text><text x="11610" y="8760">81</text></g>
+<g id="label_W22"><text x="10080" y="8910">W22</text><text x="10080" y="9080">208.5</text></g>
+<g id="label_W23"><text x="8640" y="7100">W23</text><text x="8640" y="7270">75.2</text></g>
+<g id="label_W24"><text x="8640" y="5490">W24</text><text x="8640" y="5660">340.3</text></g>
+<g id="label_W25"><text x="6400" y="4590">W25</text><text x="6400" y="4760">181</text></g>
+<g id="label_W26"><text x="5780" y="5820">W26</text><text x="5780" y="5990">316</text></g>
+<g id="label_W27"><text x="5580" y="7040">W27</text><text x="5580" y="7210">37</text></g>
+<g id="label_W28"><text x="6630" y="7040">W28</text><text x="6630" y="7210">175</text></g>
+<g id="label_W29"><text x="7850" y="7040">W29</text><text x="7850" y="7210">66.5</text></g>
+<g id="label_W30"><text x="650" y="8490">W30</text><text x="650" y="8660">196</text></g>
+<g id="label_W31"><text x="4670" y="10030">W31</text><text x="4670" y="10200">693</text></g>
+<g id="label_W32"><text x="8660" y="9500">W32</text><text x="8660" y="9670">196</text></g>
+<g id="label_W33"><text x="4860" y="5820">W33</text><text x="4860" y="5990">327.5</text></g>
+<g id="label_W34"><text x="4990" y="7040">W34</text><text x="4990" y="7210">52</text></g>
+<g id="label_W35"><text x="2980" y="7040">W35</text><text x="2980" y="7210">354.5</text></g>
+<g id="label_W36"><text x="660" y="7040">W36</text><text x="660" y="7210">120</text></g>
+<g id="label_W37"><text x="-670" y="7280">W37</text><text x="-670" y="7450">19</text></g>
+<g id="label_W38"><text x="-670" y="5600">W38</text><text x="-670" y="5770">311</text></g>
+<g id="label_W39"><text x="-670" y="2050">W39</text><text x="-670" y="2220">416</text></g>
+<g id="label_W40"><text x="350" y="-480">W40</text><text x="350" y="-310">70.3</text></g>
+</g><g font-family="Arial,Microsoft YaHei,PingFang SC,DejaVu Sans,sans-serif" font-size="170" fill="#66747A" text-anchor="middle">
+<text x="2300" y="3900">客餐厅</text>
+<text x="4230" y="1770">厨房</text>
+<text x="6050" y="1900">客卫</text>
+<text x="8410" y="1850">卧2</text>
+<text x="10800" y="1900">主卫</text>
+<text x="10110" y="5450">卧1</text>
+<text x="6830" y="5740">卧3</text>
+<text x="4400" y="8650">阳台</text>
+</g><g stroke="#B1742D" fill="none" stroke-width="14">
+<path d="M7505.0,7460 V8190 M8130,7580.0 V8190 M7505.0,8110 H8130"/>
+</g><text x="7817.5" y="8340" text-anchor="middle" font-family="Arial,Microsoft YaHei,sans-serif" font-size="125" fill="#A16625">62.5 cm (推定)</text>
+<path d="M9250,10100 h1000 m-1000,-65 v130 m1000,-130 v130" stroke="#243B45" stroke-width="18" fill="none"/><text x="9750" y="10370" text-anchor="middle" font-family="Arial,sans-serif" font-size="150">100 cm</text>
+</svg></div></div><div class="detail" id="detail" aria-live="polite">拖动三维图旋转；选择墙段核对输入值与模型值。</div>
+<div class="detail legend"><span class="tv">橙色：电视墙</span><span class="door">蓝色：门洞；平面虚线为推定门洞</span><span class="bay">紫色：飘窗</span></div>
+<details><summary>配平说明与未测项目</summary><p>阳台净宽：354.5 + 52 + 12（隔墙厚）+ 37 + 175 + 62.5（端部错位）= 693 cm。W30/W32侧墙厚不计入阳台净宽。</p><p>W26=316与W33=327.5保留在同一隔墙两侧，采用不同上端点；卧3上横墙厚11.5cm为配平推定。</p><p>展示占位高度：墙2.8m、门2.1m、阳台边1.1m、飘窗台0.6m。卫生间净宽、未测门洞宽、墙厚与未测飘窗一侧进深均属推定。除已标飘窗外，其他窗户未建模。</p><p>模型可用于初步布局，定制家具与施工前仍须复核现场最小净尺寸、门洞通过尺寸和推定项。</p></details>
+<details><summary>40 段尺寸明细（cm，偏差为mm）</summary><div class="table-wrap"><table><thead><tr><th>编号</th><th>位置</th><th>实测 cm</th><th>模型 cm</th><th>调整 mm</th></tr></thead><tbody id="table-body"></tbody></table></div></details></main>
+<footer>模型几何以毫米保存。三维显示与平面图使用同一份配平坐标。OBJ导入时设毫米、Z轴向上。</footer>
+<script>
+const D={
+  "title": "完成面实测优先配平模型",
+  "date": "2026-10-12",
+  "unit": "mm",
+  "coordinate_convention": "x right, y down in plan, z up; OBJ uses these axes",
+  "source": "用户修订PPTX和40段cm尺寸，用户授权配平未测墙厚及局部位置",
+  "status": "balanced_with_inferred_geometry_not_as_built",
+  "input_basis": "装修完成面净长；阳台693cm为侧墙内侧之间净宽",
+  "measurement_fit": {
+    "count": 40,
+    "exact_count": 37,
+    "max_absolute_adjustment_mm": 0.6666666666671972,
+    "method": "orthogonal surface constraints; equal-weight least squares only for W05+W07=W09"
+  },
+  "measurements": [
+    {
+      "id": "W01",
+      "description": "入户门洞",
+      "kind": "opening",
+      "input_cm": 107,
+      "model_cm": 107.00000000000001,
+      "residual_mm": 1.4210854715202004e-13,
+      "a_mm": [
+        703.0,
+        0
+      ],
+      "b_mm": [
+        1773.0,
+        0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        1240,
+        -480
+      ]
+    },
+    {
+      "id": "W02",
+      "description": "入户门右侧横墙",
+      "kind": "wall_face_or_segment",
+      "input_cm": 149.4,
+      "model_cm": 149.40000000000003,
+      "residual_mm": 2.8421709430404007e-13,
+      "a_mm": [
+        1773.0,
+        0
+      ],
+      "b_mm": [
+        3267.0000000000005,
+        0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        2500,
+        -480
+      ]
+    },
+    {
+      "id": "W03",
+      "description": "厨房左墙客厅侧",
+      "kind": "wall_face_or_segment",
+      "input_cm": 107,
+      "model_cm": 107.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        3267.0000000000005,
+        0
+      ],
+      "b_mm": [
+        3267.0000000000005,
+        1070
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        2920,
+        730
+      ]
+    },
+    {
+      "id": "W04",
+      "description": "厨房左墙厨房侧",
+      "kind": "wall_face_or_segment",
+      "input_cm": 67.5,
+      "model_cm": 67.5,
+      "residual_mm": 0.0,
+      "a_mm": [
+        3387.0000000000005,
+        395.0
+      ],
+      "b_mm": [
+        3387.0000000000005,
+        1070
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        3740,
+        1100
+      ]
+    },
+    {
+      "id": "W05",
+      "description": "厨房上方左横段",
+      "kind": "wall_face_or_segment",
+      "input_cm": 130.2,
+      "model_cm": 130.13333333333327,
+      "residual_mm": -0.6666666666671972,
+      "a_mm": [
+        3387.0000000000005,
+        395.0
+      ],
+      "b_mm": [
+        4688.333333333333,
+        395.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        4050,
+        650
+      ]
+    },
+    {
+      "id": "W06",
+      "description": "厨房上方竖向凹口",
+      "kind": "wall_face_or_segment",
+      "input_cm": 42,
+      "model_cm": 42.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        4688.333333333333,
+        395.0
+      ],
+      "b_mm": [
+        4688.333333333333,
+        815.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        4960,
+        80
+      ]
+    },
+    {
+      "id": "W07",
+      "description": "厨房上方右横段",
+      "kind": "wall_face_or_segment",
+      "input_cm": 54,
+      "model_cm": 53.93333333333334,
+      "residual_mm": -0.6666666666666288,
+      "a_mm": [
+        4688.333333333333,
+        815.0
+      ],
+      "b_mm": [
+        5227.666666666666,
+        815.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        4960,
+        1230
+      ]
+    },
+    {
+      "id": "W08",
+      "description": "厨房右侧墙",
+      "kind": "wall_face_or_segment",
+      "input_cm": 214,
+      "model_cm": 214.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        5227.666666666666,
+        815.0
+      ],
+      "b_mm": [
+        5227.666666666666,
+        2955.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        4870,
+        2110
+      ]
+    },
+    {
+      "id": "W09",
+      "description": "厨房下方内侧横墙",
+      "kind": "wall_face_or_segment",
+      "input_cm": 184,
+      "model_cm": 184.0666666666666,
+      "residual_mm": 0.6666666666660603,
+      "a_mm": [
+        3387.0000000000005,
+        2955.0
+      ],
+      "b_mm": [
+        5227.666666666666,
+        2955.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        4360,
+        2700
+      ]
+    },
+    {
+      "id": "W10",
+      "description": "厨房入口下侧短墙内侧",
+      "kind": "wall_face_or_segment",
+      "input_cm": 28,
+      "model_cm": 28.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        3387.0000000000005,
+        2675.0
+      ],
+      "b_mm": [
+        3387.0000000000005,
+        2955.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        3740,
+        2400
+      ]
+    },
+    {
+      "id": "W11",
+      "description": "厨房入口下侧短墙外侧",
+      "kind": "wall_face_or_segment",
+      "input_cm": 40,
+      "model_cm": 40.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        3267.0000000000005,
+        2675.0
+      ],
+      "b_mm": [
+        3267.0000000000005,
+        3075.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        2930,
+        2790
+      ]
+    },
+    {
+      "id": "W12",
+      "description": "厨房下方外侧横墙",
+      "kind": "wall_face_or_segment",
+      "input_cm": 221,
+      "model_cm": 221.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        3267.0000000000005,
+        3075.0
+      ],
+      "b_mm": [
+        5477.0,
+        3075.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        4150,
+        3370
+      ]
+    },
+    {
+      "id": "W13",
+      "description": "客卫与卧2门洞之间墙段",
+      "kind": "wall_face_or_segment",
+      "input_cm": 83.5,
+      "model_cm": 83.5,
+      "residual_mm": 0.0,
+      "a_mm": [
+        6274.29268292683,
+        3110
+      ],
+      "b_mm": [
+        7109.29268292683,
+        3110
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        6690,
+        3370
+      ]
+    },
+    {
+      "id": "W14",
+      "description": "卧2左墙",
+      "kind": "wall_face_or_segment",
+      "input_cm": 256,
+      "model_cm": 256.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        6989.29268292683,
+        395.0
+      ],
+      "b_mm": [
+        6989.29268292683,
+        2955.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        7310,
+        1960
+      ]
+    },
+    {
+      "id": "W15",
+      "description": "卧2上墙",
+      "kind": "wall_face_or_segment",
+      "input_cm": 287,
+      "model_cm": 287.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        6989.29268292683,
+        395.0
+      ],
+      "b_mm": [
+        9859.292682926829,
+        395.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        8420,
+        730
+      ]
+    },
+    {
+      "id": "W16",
+      "description": "卧2右墙",
+      "kind": "wall_face_or_segment",
+      "input_cm": 256,
+      "model_cm": 256.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        9859.292682926829,
+        395.0
+      ],
+      "b_mm": [
+        9859.292682926829,
+        2955.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        9510,
+        1960
+      ]
+    },
+    {
+      "id": "W17",
+      "description": "卧2下侧墙段",
+      "kind": "wall_face_or_segment",
+      "input_cm": 192,
+      "model_cm": 192.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        7939.29268292683,
+        2955.0
+      ],
+      "b_mm": [
+        9859.292682926829,
+        2955.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        8900,
+        2700
+      ]
+    },
+    {
+      "id": "W18",
+      "description": "右侧卫生间下侧墙段",
+      "kind": "wall_face_or_segment",
+      "input_cm": 73,
+      "model_cm": 73.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        10847.0,
+        3110
+      ],
+      "b_mm": [
+        11577.0,
+        3110
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        11140,
+        3370
+      ]
+    },
+    {
+      "id": "W19",
+      "description": "卧1右墙",
+      "kind": "wall_face_or_segment",
+      "input_cm": 435,
+      "model_cm": 435.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        11577.0,
+        3110
+      ],
+      "b_mm": [
+        11577.0,
+        7460
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        12300,
+        5160
+      ]
+    },
+    {
+      "id": "W20",
+      "description": "卧1飘窗右侧余墙",
+      "kind": "wall_face_or_segment",
+      "input_cm": 45,
+      "model_cm": 45.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        11127.0,
+        7460
+      ],
+      "b_mm": [
+        11577.0,
+        7460
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        11630,
+        7860
+      ]
+    },
+    {
+      "id": "W21",
+      "description": "飘窗侧向进深",
+      "kind": "bay_window",
+      "input_cm": 81,
+      "model_cm": 81.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        11127.0,
+        7460
+      ],
+      "b_mm": [
+        11127.0,
+        8270
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        11610,
+        8590
+      ]
+    },
+    {
+      "id": "W22",
+      "description": "飘窗外侧横段",
+      "kind": "bay_window",
+      "input_cm": 208.5,
+      "model_cm": 208.5,
+      "residual_mm": 0.0,
+      "a_mm": [
+        9042.0,
+        8270
+      ],
+      "b_mm": [
+        11127.0,
+        8270
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        10080,
+        8910
+      ]
+    },
+    {
+      "id": "W23",
+      "description": "卧1飘窗左侧余墙",
+      "kind": "wall_face_or_segment",
+      "input_cm": 75.2,
+      "model_cm": 75.20000000000005,
+      "residual_mm": 4.263256414560601e-13,
+      "a_mm": [
+        8290.0,
+        7460
+      ],
+      "b_mm": [
+        9042.0,
+        7460
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        8640,
+        7100
+      ]
+    },
+    {
+      "id": "W24",
+      "description": "卧1左墙",
+      "kind": "wall_face_or_segment",
+      "input_cm": 340.3,
+      "model_cm": 340.3,
+      "residual_mm": 0.0,
+      "a_mm": [
+        8290.0,
+        4057.0
+      ],
+      "b_mm": [
+        8290.0,
+        7460
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        8640,
+        5490
+      ]
+    },
+    {
+      "id": "W25",
+      "description": "卧3上方墙段",
+      "kind": "wall_face_or_segment",
+      "input_cm": 181,
+      "model_cm": 181.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        5385.0,
+        4300
+      ],
+      "b_mm": [
+        7195.0,
+        4300
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        6400,
+        4590
+      ]
+    },
+    {
+      "id": "W26",
+      "description": "卧3左墙内侧",
+      "kind": "wall_face_or_segment",
+      "input_cm": 316,
+      "model_cm": 316.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        5385.0,
+        4300
+      ],
+      "b_mm": [
+        5385.0,
+        7460
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        5780,
+        5820
+      ]
+    },
+    {
+      "id": "W27",
+      "description": "卧3南侧门洞左段",
+      "kind": "wall_face_or_segment",
+      "input_cm": 37,
+      "model_cm": 37.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        5385.0,
+        7460
+      ],
+      "b_mm": [
+        5755.0,
+        7460
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        5580,
+        7040
+      ]
+    },
+    {
+      "id": "W28",
+      "description": "卧3通阳台门洞",
+      "kind": "opening",
+      "input_cm": 175,
+      "model_cm": 175.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        5755.0,
+        7460
+      ],
+      "b_mm": [
+        7505.0,
+        7460
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        6630,
+        7040
+      ]
+    },
+    {
+      "id": "W29",
+      "description": "卧3南侧门洞右段",
+      "kind": "wall_face_or_segment",
+      "input_cm": 66.5,
+      "model_cm": 66.5,
+      "residual_mm": 0.0,
+      "a_mm": [
+        7505.0,
+        7460
+      ],
+      "b_mm": [
+        8170.0,
+        7460
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        7850,
+        7040
+      ]
+    },
+    {
+      "id": "W30",
+      "description": "阳台左侧",
+      "kind": "wall_face_or_segment",
+      "input_cm": 196,
+      "model_cm": 196.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        1200,
+        7580.0
+      ],
+      "b_mm": [
+        1200,
+        9540.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        650,
+        8490
+      ]
+    },
+    {
+      "id": "W31",
+      "description": "阳台下侧总宽",
+      "kind": "wall_face_or_segment",
+      "input_cm": 693,
+      "model_cm": 693.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        1200,
+        9540.0
+      ],
+      "b_mm": [
+        8130,
+        9540.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        4670,
+        10030
+      ]
+    },
+    {
+      "id": "W32",
+      "description": "阳台右侧",
+      "kind": "wall_face_or_segment",
+      "input_cm": 196,
+      "model_cm": 196.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        8130,
+        7580.0
+      ],
+      "b_mm": [
+        8130,
+        9540.0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        8660,
+        9500
+      ]
+    },
+    {
+      "id": "W33",
+      "description": "卧3左墙客厅侧",
+      "kind": "wall_face_or_segment",
+      "input_cm": 327.5,
+      "model_cm": 327.5,
+      "residual_mm": 0.0,
+      "a_mm": [
+        5265.0,
+        4185.0
+      ],
+      "b_mm": [
+        5265.0,
+        7460
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        4860,
+        5820
+      ]
+    },
+    {
+      "id": "W34",
+      "description": "客厅通阳台门洞右侧墙段",
+      "kind": "wall_face_or_segment",
+      "input_cm": 52,
+      "model_cm": 52.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        4745.0,
+        7460
+      ],
+      "b_mm": [
+        5265.0,
+        7460
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        4990,
+        7040
+      ]
+    },
+    {
+      "id": "W35",
+      "description": "客厅通阳台门洞",
+      "kind": "opening",
+      "input_cm": 354.5,
+      "model_cm": 354.5,
+      "residual_mm": 0.0,
+      "a_mm": [
+        1200,
+        7460
+      ],
+      "b_mm": [
+        4745.0,
+        7460
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        2980,
+        7040
+      ]
+    },
+    {
+      "id": "W36",
+      "description": "客厅通阳台门洞左侧墙段",
+      "kind": "wall_face_or_segment",
+      "input_cm": 120,
+      "model_cm": 120.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        0,
+        7460
+      ],
+      "b_mm": [
+        1200,
+        7460
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        660,
+        7040
+      ]
+    },
+    {
+      "id": "W37",
+      "description": "电视墙下方墙段",
+      "kind": "wall_face_or_segment",
+      "input_cm": 19,
+      "model_cm": 19.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        0,
+        7270
+      ],
+      "b_mm": [
+        0,
+        7460
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        -670,
+        7280
+      ]
+    },
+    {
+      "id": "W38",
+      "description": "电视墙",
+      "kind": "tv_wall",
+      "input_cm": 311,
+      "model_cm": 311.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        0,
+        4160
+      ],
+      "b_mm": [
+        0,
+        7270
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        -670,
+        5600
+      ]
+    },
+    {
+      "id": "W39",
+      "description": "客厅左侧上段",
+      "kind": "wall_face_or_segment",
+      "input_cm": 416,
+      "model_cm": 416.0,
+      "residual_mm": 0.0,
+      "a_mm": [
+        0,
+        0
+      ],
+      "b_mm": [
+        0,
+        4160
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        -670,
+        2050
+      ]
+    },
+    {
+      "id": "W40",
+      "description": "入户门左侧横墙",
+      "kind": "wall_face_or_segment",
+      "input_cm": 70.3,
+      "model_cm": 70.3,
+      "residual_mm": 0.0,
+      "a_mm": [
+        0,
+        0
+      ],
+      "b_mm": [
+        703.0,
+        0
+      ],
+      "basis": "finished_surface",
+      "endpoint_assignment": "inferred_from_user_plan",
+      "label_mm": [
+        350,
+        -480
+      ]
+    }
+  ],
+  "objects": [
+    {
+      "id": "west_upper",
+      "kind": "wall",
+      "rect_mm": [
+        -200.0,
+        -200.0,
+        0,
+        4160
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "tv_W38",
+      "kind": "tv_wall",
+      "rect_mm": [
+        -200.0,
+        4160,
+        0,
+        7270
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "west_lower",
+      "kind": "wall",
+      "rect_mm": [
+        -200.0,
+        7270,
+        0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "entry_W40",
+      "kind": "wall",
+      "rect_mm": [
+        0,
+        -200.0,
+        703.0,
+        0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "entry_W02",
+      "kind": "wall",
+      "rect_mm": [
+        1773.0,
+        -200.0,
+        3387.0000000000005,
+        0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_left_upper",
+      "kind": "wall",
+      "rect_mm": [
+        3267.0000000000005,
+        0,
+        3387.0000000000005,
+        1070
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_upper_W05",
+      "kind": "wall",
+      "rect_mm": [
+        3387.0000000000005,
+        195.0,
+        4688.333333333333,
+        395.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_step_W06",
+      "kind": "wall",
+      "rect_mm": [
+        4688.333333333333,
+        195.0,
+        4808.333333333333,
+        815.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_step_W07",
+      "kind": "wall",
+      "rect_mm": [
+        4688.333333333333,
+        615.0,
+        5227.666666666666,
+        815.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_right",
+      "kind": "wall",
+      "rect_mm": [
+        5227.666666666666,
+        195.0,
+        5347.666666666666,
+        2955.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_left_lower",
+      "kind": "wall",
+      "rect_mm": [
+        3267.0000000000005,
+        2675.0,
+        3387.0000000000005,
+        3075.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_south_W12",
+      "kind": "wall",
+      "rect_mm": [
+        3267.0000000000005,
+        2955.0,
+        5477.0,
+        3075.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "north_guest_bath",
+      "kind": "wall",
+      "rect_mm": [
+        5347.666666666666,
+        195.0,
+        6869.29268292683,
+        395.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "north_bed2",
+      "kind": "wall",
+      "rect_mm": [
+        6869.29268292683,
+        195.0,
+        9859.292682926829,
+        395.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "north_right_bath",
+      "kind": "wall",
+      "rect_mm": [
+        9859.292682926829,
+        195.0,
+        11777.0,
+        395.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bed2_west",
+      "kind": "wall",
+      "rect_mm": [
+        6869.29268292683,
+        395.0,
+        6989.29268292683,
+        2955.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bed2_east",
+      "kind": "wall",
+      "rect_mm": [
+        9859.292682926829,
+        395.0,
+        9979.292682926829,
+        2955.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "between_doors_W13",
+      "kind": "wall",
+      "rect_mm": [
+        6274.29268292683,
+        2955.0,
+        7109.29268292683,
+        3110
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bed2_south_W17",
+      "kind": "wall",
+      "rect_mm": [
+        7939.29268292683,
+        2955.0,
+        9979.292682926829,
+        3110
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "right_bath_south_W18",
+      "kind": "wall",
+      "rect_mm": [
+        10847.0,
+        2955.0,
+        11577.0,
+        3110
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "east_outer",
+      "kind": "wall",
+      "rect_mm": [
+        11577.0,
+        395.0,
+        11777.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bed3_west_W26_W33",
+      "kind": "wall",
+      "rect_mm": [
+        5265.0,
+        4185.0,
+        5385.0,
+        7460
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bed3_north_W25",
+      "kind": "wall",
+      "rect_mm": [
+        5265.0,
+        4185.0,
+        7195.0,
+        4300
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "master_west_W24",
+      "kind": "wall",
+      "rect_mm": [
+        8170.0,
+        4057.0,
+        8290.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_W36",
+      "kind": "wall",
+      "rect_mm": [
+        0,
+        7460,
+        1200,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_W34",
+      "kind": "wall",
+      "rect_mm": [
+        4745.0,
+        7460,
+        5265.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_bed3_corner",
+      "kind": "wall",
+      "rect_mm": [
+        5265.0,
+        7460,
+        5385.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_W27",
+      "kind": "wall",
+      "rect_mm": [
+        5385.0,
+        7460,
+        5755.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_W29",
+      "kind": "wall",
+      "rect_mm": [
+        7505.0,
+        7460,
+        8170.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_W23",
+      "kind": "wall",
+      "rect_mm": [
+        8290.0,
+        7460,
+        9042.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_W20",
+      "kind": "wall",
+      "rect_mm": [
+        11127.0,
+        7460,
+        11577.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "balcony_W30",
+      "kind": "balcony_edge",
+      "rect_mm": [
+        1080.0,
+        7580.0,
+        1200,
+        9660.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 1100,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "balcony_W31",
+      "kind": "balcony_edge",
+      "rect_mm": [
+        1200,
+        9540.0,
+        8130,
+        9660.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 1100,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "balcony_W32",
+      "kind": "balcony_edge",
+      "rect_mm": [
+        8130,
+        7580.0,
+        8250.0,
+        9660.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 1100,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bay_left",
+      "kind": "bay_window",
+      "rect_mm": [
+        8942.0,
+        7460,
+        9042.0,
+        8370.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 600,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bay_back_W22",
+      "kind": "bay_window",
+      "rect_mm": [
+        9042.0,
+        8270,
+        11127.0,
+        8370.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 600,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bay_right_W21",
+      "kind": "bay_window",
+      "rect_mm": [
+        11127.0,
+        7460,
+        11227.0,
+        8370.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 600,
+      "status": "inferred_thickness"
+    }
+  ],
+  "openings": [
+    {
+      "id": "W01",
+      "status": "measured_width_height_assumed",
+      "normal": "north",
+      "width_cm": 107.00000000000001,
+      "a_mm": [
+        703.0,
+        0
+      ],
+      "b_mm": [
+        1773.0,
+        0
+      ],
+      "height_mm": 2100,
+      "thickness_mm": 200.0
+    },
+    {
+      "id": "W35",
+      "status": "measured_width_height_assumed",
+      "normal": "south",
+      "width_cm": 354.5,
+      "a_mm": [
+        1200,
+        7460
+      ],
+      "b_mm": [
+        4745.0,
+        7460
+      ],
+      "height_mm": 2100,
+      "thickness_mm": 120.0
+    },
+    {
+      "id": "W28",
+      "status": "measured_width_height_assumed",
+      "normal": "south",
+      "width_cm": 175.0,
+      "a_mm": [
+        5755.0,
+        7460
+      ],
+      "b_mm": [
+        7505.0,
+        7460
+      ],
+      "height_mm": 2100,
+      "thickness_mm": 120.0
+    },
+    {
+      "id": "D_guest",
+      "status": "inferred_width_height_assumed",
+      "normal": "south",
+      "width_cm": 79.72926829268295,
+      "a_mm": [
+        5477.0,
+        2955.0
+      ],
+      "b_mm": [
+        6274.29268292683,
+        2955.0
+      ],
+      "height_mm": 2100,
+      "thickness_mm": 155.0
+    },
+    {
+      "id": "D_bed2",
+      "status": "inferred_width_height_assumed",
+      "normal": "south",
+      "width_cm": 83.0,
+      "a_mm": [
+        7109.29268292683,
+        2955.0
+      ],
+      "b_mm": [
+        7939.29268292683,
+        2955.0
+      ],
+      "height_mm": 2100,
+      "thickness_mm": 155.0
+    },
+    {
+      "id": "D_right_bath",
+      "status": "inferred_width_height_assumed",
+      "normal": "south",
+      "width_cm": 86.77073170731705,
+      "a_mm": [
+        9979.292682926829,
+        2955.0
+      ],
+      "b_mm": [
+        10847.0,
+        2955.0
+      ],
+      "height_mm": 2100,
+      "thickness_mm": 155.0
+    },
+    {
+      "id": "D_bed3",
+      "status": "inferred_width_height_assumed",
+      "normal": "north",
+      "width_cm": 97.5,
+      "a_mm": [
+        7195.0,
+        4300
+      ],
+      "b_mm": [
+        8170.0,
+        4300
+      ],
+      "height_mm": 2100,
+      "thickness_mm": 115.0
+    },
+    {
+      "id": "K_entry",
+      "status": "inferred_width_height_assumed",
+      "normal": "west",
+      "width_cm": 160.5,
+      "a_mm": [
+        3387.0000000000005,
+        1070
+      ],
+      "b_mm": [
+        3387.0000000000005,
+        2675.0
+      ],
+      "height_mm": 2100,
+      "thickness_mm": 120.0
+    }
+  ],
+  "rooms": [
+    [
+      "客餐厅",
+      "Living / Dining",
+      230,
+      390
+    ],
+    [
+      "厨房",
+      "Kitchen",
+      423,
+      177
+    ],
+    [
+      "客卫",
+      "Bath",
+      605,
+      190
+    ],
+    [
+      "卧2",
+      "Bed 2",
+      841,
+      185
+    ],
+    [
+      "主卫",
+      "Bath",
+      1080,
+      190
+    ],
+    [
+      "卧1",
+      "Bed 1",
+      1011,
+      545
+    ],
+    [
+      "卧3",
+      "Bed 3",
+      683,
+      574
+    ],
+    [
+      "阳台",
+      "Balcony",
+      440,
+      865
+    ]
+  ],
+  "inferred": {
+    "bed3_west_partition_thickness_cm": 12.0,
+    "bed3_north_partition_thickness_cm": 11.5,
+    "kitchen_south_thickness_cm": 12.0,
+    "upper_rooms_south_thickness_cm": 15.5,
+    "other_internal_thickness_cm": 12.0,
+    "external_thickness_cm": 20.0,
+    "balcony_side_thickness_cm": 12.0,
+    "bay_frame_thickness_cm": 10.0,
+    "balcony_right_offset_from_W28_right_cm": 62.5,
+    "bath_guest_clear_width_cm": 152.16260162601628,
+    "bath_right_clear_width_cm": 159.77073170731705,
+    "bed2_door_width_cm": 83.0,
+    "bed3_door_width_cm": 97.5,
+    "wall_height_cm": 280,
+    "door_height_cm": 210,
+    "balcony_edge_height_cm": 110,
+    "bay_sill_height_cm": 60,
+    "bay_other_side_depth_cm": 81
+  },
+  "limitations": [
+    "所有端点对应关系仍根据图意推定，数值闭合不等于现场验证",
+    "未测墙厚、卫生间净宽、室内门洞宽、阳台右端定位均为配平假设",
+    "高度仅沿用展示占位：墙2800、门2100、飘窗台600、阳台边1100mm，均非实测",
+    "除已标出的飘窗外，其他窗户、梁柱及设备管线未补造；未判定承重或可拆性",
+    "采购及定制前必须复核拟放家具位置的最小净尺寸、门洞通过尺寸和各推定项"
+  ],
+  "balcony_closure_cm": {
+    "W35": 354.5,
+    "W34": 52,
+    "partition": 12.0,
+    "W27": 37,
+    "W28": 175,
+    "right_return_offset": 62.5,
+    "total": 693
+  },
+  "model_solids": [
+    {
+      "id": "west_upper",
+      "kind": "wall",
+      "rect_mm": [
+        -200.0,
+        -200.0,
+        0,
+        4160
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "tv_W38",
+      "kind": "tv_wall",
+      "rect_mm": [
+        -200.0,
+        4160,
+        0,
+        7270
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "west_lower",
+      "kind": "wall",
+      "rect_mm": [
+        -200.0,
+        7270,
+        0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "entry_W40",
+      "kind": "wall",
+      "rect_mm": [
+        0,
+        -200.0,
+        703.0,
+        0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "entry_W02",
+      "kind": "wall",
+      "rect_mm": [
+        1773.0,
+        -200.0,
+        3387.0000000000005,
+        0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_left_upper",
+      "kind": "wall",
+      "rect_mm": [
+        3267.0000000000005,
+        0,
+        3387.0000000000005,
+        1070
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_upper_W05",
+      "kind": "wall",
+      "rect_mm": [
+        3387.0000000000005,
+        195.0,
+        4688.333333333333,
+        395.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_step_W06",
+      "kind": "wall",
+      "rect_mm": [
+        4688.333333333333,
+        195.0,
+        4808.333333333333,
+        815.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_step_W07",
+      "kind": "wall",
+      "rect_mm": [
+        4688.333333333333,
+        615.0,
+        5227.666666666666,
+        815.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_right",
+      "kind": "wall",
+      "rect_mm": [
+        5227.666666666666,
+        195.0,
+        5347.666666666666,
+        2955.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_left_lower",
+      "kind": "wall",
+      "rect_mm": [
+        3267.0000000000005,
+        2675.0,
+        3387.0000000000005,
+        3075.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "kitchen_south_W12",
+      "kind": "wall",
+      "rect_mm": [
+        3267.0000000000005,
+        2955.0,
+        5477.0,
+        3075.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "north_guest_bath",
+      "kind": "wall",
+      "rect_mm": [
+        5347.666666666666,
+        195.0,
+        6869.29268292683,
+        395.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "north_bed2",
+      "kind": "wall",
+      "rect_mm": [
+        6869.29268292683,
+        195.0,
+        9859.292682926829,
+        395.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "north_right_bath",
+      "kind": "wall",
+      "rect_mm": [
+        9859.292682926829,
+        195.0,
+        11777.0,
+        395.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bed2_west",
+      "kind": "wall",
+      "rect_mm": [
+        6869.29268292683,
+        395.0,
+        6989.29268292683,
+        2955.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bed2_east",
+      "kind": "wall",
+      "rect_mm": [
+        9859.292682926829,
+        395.0,
+        9979.292682926829,
+        2955.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "between_doors_W13",
+      "kind": "wall",
+      "rect_mm": [
+        6274.29268292683,
+        2955.0,
+        7109.29268292683,
+        3110
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bed2_south_W17",
+      "kind": "wall",
+      "rect_mm": [
+        7939.29268292683,
+        2955.0,
+        9979.292682926829,
+        3110
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "right_bath_south_W18",
+      "kind": "wall",
+      "rect_mm": [
+        10847.0,
+        2955.0,
+        11577.0,
+        3110
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "east_outer",
+      "kind": "wall",
+      "rect_mm": [
+        11577.0,
+        395.0,
+        11777.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bed3_west_W26_W33",
+      "kind": "wall",
+      "rect_mm": [
+        5265.0,
+        4185.0,
+        5385.0,
+        7460
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bed3_north_W25",
+      "kind": "wall",
+      "rect_mm": [
+        5265.0,
+        4185.0,
+        7195.0,
+        4300
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "master_west_W24",
+      "kind": "wall",
+      "rect_mm": [
+        8170.0,
+        4057.0,
+        8290.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_W36",
+      "kind": "wall",
+      "rect_mm": [
+        0,
+        7460,
+        1200,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_W34",
+      "kind": "wall",
+      "rect_mm": [
+        4745.0,
+        7460,
+        5265.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_bed3_corner",
+      "kind": "wall",
+      "rect_mm": [
+        5265.0,
+        7460,
+        5385.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_W27",
+      "kind": "wall",
+      "rect_mm": [
+        5385.0,
+        7460,
+        5755.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_W29",
+      "kind": "wall",
+      "rect_mm": [
+        7505.0,
+        7460,
+        8170.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_W23",
+      "kind": "wall",
+      "rect_mm": [
+        8290.0,
+        7460,
+        9042.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "south_W20",
+      "kind": "wall",
+      "rect_mm": [
+        11127.0,
+        7460,
+        11577.0,
+        7580.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 2800,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "balcony_W30",
+      "kind": "balcony_edge",
+      "rect_mm": [
+        1080.0,
+        7580.0,
+        1200,
+        9660.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 1100,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "balcony_W31",
+      "kind": "balcony_edge",
+      "rect_mm": [
+        1200,
+        9540.0,
+        8130,
+        9660.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 1100,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "balcony_W32",
+      "kind": "balcony_edge",
+      "rect_mm": [
+        8130,
+        7580.0,
+        8250.0,
+        9660.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 1100,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bay_left",
+      "kind": "bay_window",
+      "rect_mm": [
+        8942.0,
+        7460,
+        9042.0,
+        8370.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 600,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bay_back_W22",
+      "kind": "bay_window",
+      "rect_mm": [
+        9042.0,
+        8270,
+        11127.0,
+        8370.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 600,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "bay_right_W21",
+      "kind": "bay_window",
+      "rect_mm": [
+        11127.0,
+        7460,
+        11227.0,
+        8370.0
+      ],
+      "z0_mm": 0,
+      "height_mm": 600,
+      "status": "inferred_thickness"
+    },
+    {
+      "id": "floor_living",
+      "kind": "floor",
+      "rect_mm": [
+        0,
+        0,
+        3267.0000000000005,
+        7460
+      ],
+      "z0_mm": -100,
+      "height_mm": 100,
+      "status": "inferred_extent"
+    },
+    {
+      "id": "floor_upper_left",
+      "kind": "floor",
+      "rect_mm": [
+        3267.0000000000005,
+        395.0,
+        4688.333333333333,
+        7460
+      ],
+      "z0_mm": -100,
+      "height_mm": 100,
+      "status": "inferred_extent"
+    },
+    {
+      "id": "floor_kitchen_step",
+      "kind": "floor",
+      "rect_mm": [
+        4688.333333333333,
+        815.0,
+        5227.666666666666,
+        7460
+      ],
+      "z0_mm": -100,
+      "height_mm": 100,
+      "status": "inferred_extent"
+    },
+    {
+      "id": "floor_upper_right",
+      "kind": "floor",
+      "rect_mm": [
+        5227.666666666666,
+        395.0,
+        11577.0,
+        7460
+      ],
+      "z0_mm": -100,
+      "height_mm": 100,
+      "status": "inferred_extent"
+    },
+    {
+      "id": "floor_balcony",
+      "kind": "balcony_floor",
+      "rect_mm": [
+        1200,
+        7580.0,
+        8130,
+        9540.0
+      ],
+      "z0_mm": -100,
+      "height_mm": 100,
+      "status": "inferred_extent"
+    },
+    {
+      "id": "floor_bay",
+      "kind": "bay_window",
+      "rect_mm": [
+        9042.0,
+        7460,
+        11127.0,
+        8270
+      ],
+      "z0_mm": -100,
+      "height_mm": 100,
+      "status": "inferred_extent"
+    },
+    {
+      "id": "threshold_W35",
+      "kind": "floor",
+      "rect_mm": [
+        1200,
+        7460,
+        4745.0,
+        7580.0
+      ],
+      "z0_mm": -100,
+      "height_mm": 100,
+      "status": "inferred_extent"
+    },
+    {
+      "id": "threshold_W28",
+      "kind": "floor",
+      "rect_mm": [
+        5755.0,
+        7460,
+        7505.0,
+        7580.0
+      ],
+      "z0_mm": -100,
+      "height_mm": 100,
+      "status": "inferred_extent"
+    },
+    {
+      "id": "lintel_W01",
+      "kind": "wall",
+      "rect_mm": [
+        703.0,
+        -200.0,
+        1773.0,
+        0.0
+      ],
+      "z0_mm": 2100,
+      "height_mm": 700,
+      "status": "assumed_lintel"
+    },
+    {
+      "id": "lintel_W35",
+      "kind": "wall",
+      "rect_mm": [
+        1200,
+        7460,
+        4745.0,
+        7580.0
+      ],
+      "z0_mm": 2100,
+      "height_mm": 700,
+      "status": "assumed_lintel"
+    },
+    {
+      "id": "lintel_W28",
+      "kind": "wall",
+      "rect_mm": [
+        5755.0,
+        7460,
+        7505.0,
+        7580.0
+      ],
+      "z0_mm": 2100,
+      "height_mm": 700,
+      "status": "assumed_lintel"
+    },
+    {
+      "id": "lintel_D_guest",
+      "kind": "wall",
+      "rect_mm": [
+        5477.0,
+        2955.0,
+        6274.29268292683,
+        3110.0
+      ],
+      "z0_mm": 2100,
+      "height_mm": 700,
+      "status": "assumed_lintel"
+    },
+    {
+      "id": "lintel_D_bed2",
+      "kind": "wall",
+      "rect_mm": [
+        7109.29268292683,
+        2955.0,
+        7939.29268292683,
+        3110.0
+      ],
+      "z0_mm": 2100,
+      "height_mm": 700,
+      "status": "assumed_lintel"
+    },
+    {
+      "id": "lintel_D_right_bath",
+      "kind": "wall",
+      "rect_mm": [
+        9979.292682926829,
+        2955.0,
+        10847.0,
+        3110.0
+      ],
+      "z0_mm": 2100,
+      "height_mm": 700,
+      "status": "assumed_lintel"
+    },
+    {
+      "id": "lintel_D_bed3",
+      "kind": "wall",
+      "rect_mm": [
+        7195.0,
+        4185.0,
+        8170.0,
+        4300.0
+      ],
+      "z0_mm": 2100,
+      "height_mm": 700,
+      "status": "assumed_lintel"
+    },
+    {
+      "id": "lintel_K_entry",
+      "kind": "wall",
+      "rect_mm": [
+        3267.0000000000005,
+        1070,
+        3387.0000000000005,
+        2675.0
+      ],
+      "z0_mm": 2100,
+      "height_mm": 700,
+      "status": "assumed_lintel"
+    }
+  ]
+};
+const canvas=document.getElementById('model'),ctx=canvas.getContext('2d'),panel=document.getElementById('plan');
+let angle=-.38,tilt=.83,drag=null,selected='',mode=3;
+const faceIds=[[0,3,2,1],[4,5,6,7],[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]];
+const colors={wall:'#bbc4c8',tv_wall:'#E97132',balcony_edge:'#a4b2b8',bay_window:'#A02B93',floor:'#efefea',balcony_floor:'#e2e8df'};
+const selector=document.getElementById('wall-select');
+for(const m of D.measurements){const o=document.createElement('option');o.value=m.id;o.textContent=m.id+' '+m.input_cm+' cm';selector.appendChild(o);const tr=document.createElement('tr');for(const value of [m.id,m.description,m.input_cm,m.model_cm.toFixed(3),(Math.abs(m.residual_mm)<1e-6?0:m.residual_mm).toFixed(3)]){const td=document.createElement('td');td.textContent=value;tr.appendChild(td)}document.getElementById('table-body').appendChild(tr)}
+function geometry(){const cap=Number(document.getElementById('cap').value);return D.model_solids.flatMap(o=>{const [x0,y0,x1,y1]=o.rect_mm,z0=o.z0_mm,z1=Math.min(z0+o.height_mm,cap);if(z1<=z0)return[];return[{...o,v:[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]]}]})}
+function draw(){if(mode!==3)return;const w=canvas.clientWidth,h=canvas.clientHeight,r=window.devicePixelRatio||1;canvas.width=Math.round(w*r);canvas.height=Math.round(h*r);ctx.setTransform(r,0,0,r,0,0);ctx.clearRect(0,0,w,h);if(!w||!h)return;
+const cos=Math.cos(angle),sin=Math.sin(angle),ct=Math.cos(tilt),st=Math.sin(tilt);
+const project=([x,y,z])=>{const xx=x*cos-y*sin,yy=x*sin+y*cos;return [xx,yy*ct-z*st,yy*st+z*ct]};
+const boxes=geometry(),all=boxes.flatMap(o=>o.v.map(project)),minx=Math.min(...all.map(q=>q[0])),maxx=Math.max(...all.map(q=>q[0])),miny=Math.min(...all.map(q=>q[1])),maxy=Math.max(...all.map(q=>q[1])),scale=Math.min((w-45)/(maxx-minx),(h-45)/(maxy-miny));
+const screen=p=>{const q=project(p);return[w/2+(q[0]-(minx+maxx)/2)*scale,h/2+(q[1]-(miny+maxy)/2)*scale]};
+const faces=[];for(const o of boxes){for(const f of faceIds){const vertices=f.map(i=>o.v[i]),avg=vertices.reduce((a,v)=>a.map((x,j)=>x+v[j]/4),[0,0,0]);faces.push({vertices,depth:project(avg)[2],kind:o.kind,top:f===faceIds[1],floor:o.id.startsWith('floor')||o.id.startsWith('threshold')})}}
+faces.sort((a,b)=>a.floor!==b.floor?(a.floor?-1:1):a.depth-b.depth);for(const f of faces){ctx.beginPath();f.vertices.map(screen).forEach((q,i)=>i?ctx.lineTo(...q):ctx.moveTo(...q));ctx.closePath();ctx.fillStyle=colors[f.kind];ctx.fill();if(!f.top&&!f.floor){ctx.fillStyle='rgba(20,40,50,.10)';ctx.fill()}ctx.strokeStyle=f.floor?'#e2e5df':'#667980';ctx.lineWidth=.55;ctx.stroke()}
+ctx.lineWidth=2.5;ctx.strokeStyle='#0F9ED5';for(const o of D.openings){const a=screen([...o.a_mm,12]),b=screen([...o.b_mm,12]);ctx.setLineDash(o.status.startsWith('inferred')?[4,3]:[]);ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke()}ctx.setLineDash([]);
+if(selected){const m=D.measurements.find(x=>x.id===selected);ctx.strokeStyle='#CF2525';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(...screen([...m.a_mm,Number(document.getElementById('cap').value)+50]));ctx.lineTo(...screen([...m.b_mm,Number(document.getElementById('cap').value)+50]));ctx.stroke()}
+}
+function setMode(next){mode=next;canvas.hidden=mode!==3;canvas.style.display=mode===3?'block':'none';panel.hidden=mode===3;document.getElementById('b3').setAttribute('aria-pressed',String(mode===3));document.getElementById('b2').setAttribute('aria-pressed',String(mode===2));document.getElementById('cap').disabled=mode!==3;draw()}
+document.getElementById('b3').onclick=()=>setMode(3);document.getElementById('b2').onclick=()=>setMode(2);document.getElementById('reset').onclick=()=>{angle=-.38;tilt=.83;draw()};document.getElementById('cap').onchange=draw;
+selector.onchange=()=>{selected=selector.value;panel.querySelectorAll('[id^="label_W"]').forEach(e=>e.setAttribute('fill','#9E302A'));if(selected){const m=D.measurements.find(x=>x.id===selected);document.getElementById('detail').textContent=`${m.id} ${m.description}：实测 ${m.input_cm} cm，模型 ${m.model_cm.toFixed(3)} cm，调整 ${m.residual_mm.toFixed(3)} mm。`;const label=panel.querySelector('#label_'+selected);if(label)label.setAttribute('fill','#0F9ED5')}else document.getElementById('detail').textContent='拖动三维图旋转；选择墙段核对输入值与模型值。';draw()};
+canvas.onpointerdown=e=>{drag=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId)};canvas.onpointermove=e=>{if(!drag)return;angle+=(e.clientX-drag[0])*.008;tilt=Math.max(.20,Math.min(1.42,tilt+(e.clientY-drag[1])*.006));drag=[e.clientX,e.clientY];draw()};canvas.onpointerup=canvas.onpointercancel=()=>{drag=null};new ResizeObserver(draw).observe(canvas);draw();
+</script></body></html>

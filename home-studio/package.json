@@ -1,0 +1,1 @@
+{"name":"qiju-home-studio","private":true,"type":"module","scripts":{"test":"node tests/spatial.test.mjs"}}
