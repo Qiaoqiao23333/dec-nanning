@@ -1,0 +1,10 @@
+import fs from 'node:fs/promises';
+import {wallSurfaces} from '../shared/spatial.js';
+const root=new URL('../',import.meta.url),read=p=>fs.readFile(new URL(p,root),'utf8');
+const geometry=JSON.parse((await read('shared/geometry.js')).split('=').slice(1).join('=').replace(/;$/,''));
+const surfaces=Object.fromEntries(wallSurfaces(geometry.model_solids.filter(w=>w.z0_mm===0&&['wall','tv_wall'].includes(w.kind))).map(s=>[s.id,{length:s.length}]));
+const protocol=(await read('shared/sync-protocol.js')).replaceAll('export ','');
+const worker=(await read('worker/index.js')).replace(/^import .*\n/,'').replace('__SURFACES__',JSON.stringify(surfaces));
+await fs.mkdir(new URL('dist/server/',root),{recursive:true});await fs.mkdir(new URL('dist/.openai/',root),{recursive:true});
+await fs.writeFile(new URL('dist/server/index.js',root),protocol+'\n'+worker);await fs.copyFile(new URL('.openai/hosting.json',root),new URL('dist/.openai/hosting.json',root));
+const module=await import(new URL('dist/server/index.js?validate='+Date.now(),root));if(typeof module.default.fetch!=='function')throw Error('Invalid Worker');console.log('Shared layout Worker built');

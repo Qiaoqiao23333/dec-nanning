@@ -1,1 +1,8 @@
-{"name":"qiju-home-studio","private":true,"type":"module","scripts":{"test":"node tests/spatial.test.mjs"}}
+{
+  "name": "qiju-home-studio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node backend/scripts/build.mjs && node tests/spatial.test.mjs && node tests/sync.test.mjs"
+  }
+}
