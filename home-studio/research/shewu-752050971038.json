@@ -1,0 +1,34 @@
+{
+  "storeName": "奢屋家具",
+  "itemId": "752050971038",
+  "url": "https://item.taobao.com/item.htm?id=752050971038",
+  "title": "奢屋家具实木餐边柜餐桌一体可伸缩折叠小户型多功能中古风储物柜",
+  "observedAt": "2026-10-14",
+  "source": "已登录淘宝参数信息及图文详情截图",
+  "modelNumber": "959",
+  "displayedSize": "160x40x185cm",
+  "cabinetEnvelopeMm": {
+    "width": 1600,
+    "depth": 450,
+    "height": 1850
+  },
+  "dimensionInterpretation": "图文标深450mm，所选规格标400mm；模型暂按450mm预留，深度待商家核实",
+  "selectedVariantVisibleText": "【FAS级全实木】胡桃色1.6米柜桌",
+  "otherVisibleVariantText": "【FAS级全实木】胡桃色1.6米柜桌+2椅",
+  "extendedTableDimensionsMm": {
+    "length": 1720,
+    "width": 800,
+    "height": 770
+  },
+  "status": "已建模当前商品柜体及桌子；全店目录尚未取得",
+  "notes": [
+    "柜桌组合中的椅子不能使用柜体尺寸建模",
+    "未读取全店目录，不代表全店商品清单",
+    "造型细节按商品照片比例还原，外部尺寸采用商家标注"
+  ],
+  "userOverrideTableDimensionsMm": {
+    "length": 1200,
+    "width": 800,
+    "height": 770
+  }
+}

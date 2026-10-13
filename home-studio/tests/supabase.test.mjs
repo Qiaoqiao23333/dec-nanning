@@ -32,5 +32,9 @@ try{
  b.items[0].y+=200;assert.equal((await send(next,b)).status,409);
  for(let n=0;n<12;n++){const state=await read();state.layout.items[2].x+=10;await write(state.revision,state.layout)}
  await db.exec('reset role');assert.equal(Number((await db.query('select count(*) from qiju_private.history')).rows[0].count),10);
+ await db.exec(await fs.readFile(new URL('../supabase/add-shewu959.sql',import.meta.url),'utf8'));
+ await db.exec('set role anon');
+ const latest=await read();for(const pid of ['shewu959-cabinet','shewu959-table','shewu959-table120'])latest.layout.items.push({id:pid,pid,x:1000,y:1000,r:0,color:'#725039'});
+ assert.equal((await write(latest.revision,latest.layout)).layout.items.length,11);
  console.log('Supabase SQL and transport passed: repeatable setup, anonymous RPC, private tables, CAS, validation, merge, conflict, bounded history.');
 }finally{await db.close()}

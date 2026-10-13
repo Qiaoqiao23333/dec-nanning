@@ -123,7 +123,7 @@ begin
    if jsonb_typeof(entity) is distinct from 'object' or coalesce(entity->>'id','') !~ '^[a-zA-Z0-9_-]{1,100}$' then raise exception 'Invalid entity'; end if;
    if collection='items' then
     allowed:=array['id','pid','x','y','r','color'];
-    if not (entity ?& allowed) or coalesce(entity->>'pid','') not in ('kivik','lack','lisabo','chair','kallax','poang','lo hals','hektar','malm')
+    if not (entity ?& allowed) or coalesce(entity->>'pid','') not in ('kivik','lack','lisabo','chair','kallax','poang','lo hals','hektar','malm','shewu959-cabinet','shewu959-table','shewu959-table120')
       or jsonb_typeof(entity->'x') is distinct from 'number' or jsonb_typeof(entity->'y') is distinct from 'number'
       or entity->'r' not in ('0'::jsonb,'90'::jsonb,'180'::jsonb,'270'::jsonb)
       or coalesce(entity->>'color','') !~ '^#[0-9a-fA-F]{6}$' then raise exception 'Invalid furniture'; end if;

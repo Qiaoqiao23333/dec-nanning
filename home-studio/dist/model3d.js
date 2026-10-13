@@ -8,6 +8,50 @@ function cylinder(g,r1,r2,h,x,y,z,color,type='plain'){let mesh=new T.Mesh(new T.
 function rod(g,pts,r,color,type='wood'){let curve=new T.CatmullRomCurve3(pts.map(p=>new T.Vector3(...p)));let m=new T.Mesh(new T.TubeGeometry(curve,32,r,8,false),mat(color,type));g.add(m);m.castShadow=true;return m}
 function seam(g,w,h,d,x,y,z,color){const edges=new T.EdgesGeometry(rounded(w,h,d,.02),30);const line=new T.LineSegments(edges,new T.LineBasicMaterial({color,transparent:true,opacity:.23}));line.position.set(x,y,z);g.add(line)}
 export function furniture(p,color){const g=new T.Group(),w=p.w/1000,d=p.d/1000,h=p.h/1000,wood='#cbb18a',dark='#4a453c',fabric=color;const b=(W,H,D,X,Y,Z,C=color,R=.016,M='plain')=>block(g,W,H,D,X,Y,Z,C,R,M);const leg=(x,z,hh=.34)=>cylinder(g,.023,.017,hh,x,hh/2,z,wood,'wood');
+if(p.kind==='sideboard'){
+ // The merchant diagram splits the 160 cm facade into 40 / 85 / 35 cm bays.
+ const z=d/2, darkWood='#3f2b20',glass='#514c36',brass='#bd9554';
+ const panel=(W,H,D,X,Y,Z,C=color)=>b(W,H,D,X,Y,Z,C,.004,'wood');
+ panel(w,.025,d,0,.0125,0);panel(w,.025,d,0,h-.0125,0);
+ panel(.025,h,d,-w/2+.0125,h/2,0);panel(.025,h,d,w/2-.0125,h/2,0);
+ panel(w-.05,h-.05,.018,0,h/2,-d/2+.009,darkWood);
+ for(const y of [.90,1.45])panel(w-.025,.025,d-.015,0,y,0);
+ for(const x of [-.4,.45])panel(.018,.875,d-.025,x,.45,0);
+ panel(.38,.018,d-.025,-.6,.38,0);
+ for(const y of [.525,.745]){panel(.376,.206,.024,-.6,y,z-.02);cylinder(g,.012,.012,.018,-.6,y,z-.010,brass,'metal').rotation.x=Math.PI/2;}
+ // Folded table slides into the central bay, with its leaves vertical.
+ panel(.82,.68,.035,.025,.365,z-.04);panel(.82,.09,.027,.025,.837,z-.023);
+ for(const x of [-.25,.3]){let knob=cylinder(g,.010,.010,.018,x,.837,z-.010,brass,'metal');knob.rotation.x=Math.PI/2;}
+ const glazedDoor=(x,y,W,H)=>{
+ panel(W,H,.025,x,y,z-.026);
+ b(W-.045,H-.055,.008,x,y,z-.009,glass,.035,'metal');
+ for(let xx=x-W/2+.03;xx<x+W/2-.025;xx+=.014)b(.003,H-.08,.005,xx,y,z-.003,'#998671',.001,'metal');
+ let knob=cylinder(g,.009,.009,.014,x+W/2-.025,y,z-.008,brass,'metal');knob.rotation.x=Math.PI/2;
+ };
+ glazedDoor(.625,.45,.32,.84);
+ for(const x of [-.525,.005])glazedDoor(x,1.65,.52,.36);
+ panel(.018,.375,d-.03,.285,1.65,0);panel(.49,.018,d-.035,.535,1.635,0);
+ // Open counter recess and subtle warm task light under the upper cabinet.
+ b(1.47,.008,.035,0,1.431,z-.07,'#e6c88f',.002);
+ panel(.50,.09,.016,-.06,1.28,-d/2+.02);
+ for(let i=0;i<5;i++)b(.012,.16,.015,-.25+i*.095,1.18,-d/2+.035,brass,.003,'metal');
+ for(let j=0;j<6;j++)panel(.027,.19+(j%3)*.025,.16,.35+j*.055,1.56,-.04,['#8a7353','#6d7660','#bba17a'][j%3]);
+}
+else if(p.kind==='foldingTable'){
+ const mid=.32,leaf=(w-mid)/2;
+ b(mid,.035,d,0,h-.0175,0,color,.012,'wood');
+ for(const side of [-1,1]){
+ b(leaf,.035,d,side*(mid/2+leaf/2),h-.0175,0,color,.022,'wood');
+ b(.022,h-.055,d-.06,side*.14,(h-.055)/2+.02,0,color,.004,'wood');
+ for(const zz of [-d/2+.055,d/2-.055]){
+ const xx=side*(w/2-.075);
+ b(.037,h-.075,.037,xx,(h-.075)/2+.035,zz,color,.005,'wood');
+ b(w/2-.18,.035,.027,side*(w/4+.045),.19,zz,color,.004,'wood');
+ let wheel=cylinder(g,.018,.018,.024,xx,.018,zz,'#333431','metal');wheel.rotation.x=Math.PI/2;
+ }
+ }
+}
+else 
 if(p.kind==='sofa'){for(let x of [-w/2+.12,w/2-.12])for(let z of [-d/2+.12,d/2-.12])leg(x,z,.12);b(w-.04,.22,d-.05,0,.22,0,fabric,.065,'fabric');b(w-.1,.46,.19,0,.58,-d/2+.1,fabric,.067,'fabric');for(let x of [-w/2+.13,w/2-.13])b(.26,.40,d,x,.42,0,fabric,.065,'fabric');for(let i=0;i<3;i++){let cw=(w-.56)/3,x=-w/2+.28+cw*(i+.5);b(cw-.012,.17,d-.25,x,.405,.08,fabric,.05,'fabric');let cushion=b(cw-.025,.35,.18,x,.63,-d/2+.24,fabric,.065,'fabric');cushion.rotation.x=-.12;seam(g,cw-.03,.155,d-.27,x,.405,.08,'#6d7062')}for(const [x,c] of [[-.75,'#79866c'],[.70,'#d1a780']]){let pillow=b(.31,.30,.13,x,.61,-.02,c,.062,'fabric');pillow.rotation.z=x>0?-.20:.22}}
 else if(p.id==='poang'){for(let x of [-.285,.285]){rod(g,[[x,.08,.34],[x,.07,-.28],[x,.30,-.30],[x,.43,.25]],.027,wood);rod(g,[[x,.47,.30],[x,.48,-.08],[x,.71,-.29],[x,.98,-.32]],.025,wood);rod(g,[[x,.55,.30],[x,.55,-.23]],.025,wood)}let seat=b(.54,.11,.48,0,.40,.05,fabric,.045,'fabric');seat.rotation.x=-.12;let back=b(.54,.58,.11,0,.72,-.23,fabric,.043,'fabric');back.rotation.x=-.20;b(.5,.15,.12,0,.90,-.19,fabric,.035,'fabric');for(let x of [-.25,.25])seam(g,.015,.53,.12,x,.71,-.22,dark)}
 else if(p.kind==='chair'){for(let x of [-w/2+.06,w/2-.06])for(let z of [-d/2+.06,d/2-.06])leg(x,z,.43);b(w,.04,d-.07,0,.43,0,wood,.024,'wood');for(let x of [-w/2+.04,w/2-.04])b(.04,.42,.04,x,.59,-d/2+.045,wood,.012,'wood');let back=b(w-.025,.22,.045,0,h-.13,-d/2+.035,wood,.022,'wood');back.rotation.x=-.08}
