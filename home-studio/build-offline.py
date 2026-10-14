@@ -12,6 +12,8 @@ for name,path in [('qiju-catalog','shewu-catalog.js'),('qiju-supabase','supabase
   for i in images: s=s.replace(json.dumps(f'assets/shewu/source-{i}.png'),f'shewuImages[{i}]')
   s='const shewuImages='+json.dumps(images)+';\n'+s
  s=s.replace("'./sync-protocol.js'","'qiju-protocol'").replace("'./vendor/three.module.js'","'qiju-three'").replace("'./model3d.js'","'qiju-model'").replace("'./spatial.js'","'qiju-spatial'")
+ if path=='viewer3d.js':
+  for i in range(2): s=s.replace(f'assets/room-{i}.jpeg','data:image/jpeg;base64,'+base64.b64encode((root/f'assets/room-{i}.jpeg').read_bytes()).decode())
  imports[name]=data(s)
 app=(root/'app.js').read_text().replace("'./shewu-catalog.js'","'qiju-catalog'").replace("'./sync-protocol.js'","'qiju-protocol'").replace("'./supabase-sync.js'","'qiju-supabase'").replace("'./shared-sync.js'","'qiju-sync'").replace("'./viewer3d.js'","'qiju-viewer'").replace("'./spatial.js'","'qiju-spatial'")
 for i in range(2): app=app.replace(f'assets/room-{i}.jpeg','data:image/jpeg;base64,'+base64.b64encode((root/f'assets/room-{i}.jpeg').read_bytes()).decode())
